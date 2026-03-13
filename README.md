@@ -1,70 +1,29 @@
-# flix-dev-console
-flixnettv/flix-dev-console
-📦 البنية الكاملة:
-flix-dev-console/
-├── backend/
-│   ├── src/
-│   │   ├── core/
-│   │   │   ├── server.js
-│   │   │   └── router.js
-│   │   ├── modules/
-│   │   │   ├── auth/
-│   │   │   │   └── auth.routes.js
-│   │   │   ├── projects/
-│   │   │   │   └── projects.routes.js
-│   │   │   ├── deploy/
-│   │   │   │   └── deploy.routes.js
-│   │   │   ├── database/
-│   │   │   │   └── database.routes.js
-│   │   │   ├── docker/
-│   │   │   │   └── docker.routes.js
-│   │   │   ├── logs/
-│   │   │   │   └── logs.routes.js
-│   │   │   ├── domains/
-│   │   │   │   └── domains.routes.js
-│   │   │   └── ai/
-│   │   │       └── ai.routes.js
-│   │   └── config/
-│   └── package.json
-├── frontend/
-│   ├── src/
-│   │   ├── pages/
-│   │   │   ├── auth/
-│   │   │   │   ├── Login.jsx
-│   │   │   │   └── Signup.jsx
-│   │   │   ├── dashboard/
-│   │   │   │   └── Dashboard.jsx
-│   │   │   ├── projects/
-│   │   │   │   └── Projects.jsx
-│   │   │   ├── deploy/
-│   │   │   │   └── Deploy.jsx
-│   │   │   ├── database/
-│   │   │   │   └── Database.jsx
-│   │   │   ├── logs/
-│   │   │   │   └── Logs.jsx
-│   │   │   ├── domains/
-│   │   │   │   └── Domains.jsx
-│   │   │   ├── ai/
-│   │   │   │   └── AI.jsx
-│   │   │   └── settings/
-│   │   │       └── Settings.jsx
-│   │   ├── components/
-│   │   │   └── layout/
-│   │   │       ├── Navbar.jsx
-│   │   │       └── Sidebar.jsx
-│   │   ├── i18n/
-│   │   │   ├── ar.js
-│   │   │   ├── en.js
-│   │   │   └── config.js
-│   │   ├── App.jsx
-│   │   ├── main.jsx
-│   │   └── index.css
-│   ├── vite.config.js
-│   ├── tailwind.config.js
-│   ├── postcss.config.js
-│   ├── index.html
-│   └── package.json
-├── .env
-├── .env.example
-├── .gitignore
-└── README.md
+# FlixCod (inside flix-dev-console)
+
+واجهة ويب حديثة كغلاف أنيق لطرفية (Terminal Shell) مع صندوق محادثة واحد ذكي، تدعم العربية والإنجليزية، وتعمل بنمط يعتمد على موارد جهاز المستخدم أولاً.
+
+## Features
+- واجهة ثنائية اللغة (AR/EN) + اتجاه RTL/LTR.
+- ثيمين: داكن + أبيض باهت.
+- صندوق محادثة واحد مع اقتراحات تفاعلية سريعة.
+- ربط مزوّد النماذج (Open Code / Gemini / openclaw / Open Source) بعد تسجيل المستخدم.
+- وضع "Local Device" لتقليل الاعتماد على السحابة ضمن الخطط المجانية.
+- Backend starter API جاهز للتوسعة.
+
+## Structure
+- `frontend/`: React + Vite app.
+- `backend/`: Express API starter.
+- `docs/FREE_TIER_PLAN.md`: خطة المشروع والنشر ضمن الحسابات والخطط المجانية.
+
+## Run locally
+```bash
+npm install
+npm run dev:frontend
+# in another terminal
+npm run dev:backend
+```
+
+## Build
+```bash
+npm run build
+```
