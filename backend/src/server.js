@@ -1,19 +1,72 @@
 import express from 'express';
 import cors from 'cors';
-import { promises as fs } from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import crypto from 'node:crypto';
+import { getEnv } from './lib/env.js';
+import { insertChatMessage } from './services/supabase.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const backendRoot = path.join(__dirname, '..');
-const dbPath = process.env.DB_FILE
-  ? path.isAbsolute(process.env.DB_FILE)
-    ? process.env.DB_FILE
-    : path.join(backendRoot, process.env.DB_FILE)
-  : path.join(backendRoot, 'data', 'db.json');
-const corsOrigin = process.env.CORS_ORIGIN || '*';
+const env = getEnv();
+const app = express();
+
+app.use(cors({ origin: env.corsOrigin === '*' ? true : env.corsOrigin }));
+app.use(express.json());
+
+app.get('/api/health', (_req, res) => {
+  res.json({
+    status: 'ok',
+    service: 'flixcod-api',
+    supabaseConfigured: env.isConfigured,
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.get('/api/config', (_req, res) => {
+  res.json({
+    mode: 'device-first',
+    providers: ['Open Code', 'Google Gemini', 'openclaw', 'Open Source'],
+    storage: env.isConfigured ? 'supabase' : 'memory-only'
+  });
+});
+
+app.post('/api/chat', async (req, res) => {
+  const {
+    message = '',
+    provider = 'Open Source',
+    model = 'default',
+    localMode = true,
+    userId = 'anonymous'
+  } = req.body || {};
+
+  const cleanMessage = String(message).trim();
+  if (!cleanMessage) {
+    return res.status(400).json({ error: 'Message is required.' });
+  }
+
+  const output = `FlixCod> ${cleanMessage}`;
+
+  const dbResult = await insertChatMessage({
+    user_id: userId,
+    provider,
+    model,
+    local_mode: localMode,
+    input_text: cleanMessage,
+    output_text: output
+  });
+
+  return res.json({
+    output,
+    provider,
+    model,
+    mode: localMode ? 'local-device' : 'cloud-proxy',
+    persisted: dbResult.ok,
+    persistenceMessage: dbResult.ok ? 'Saved to Supabase.' : dbResult.reason
+  });
+});
+
+app.use((_req, res) => {
+  res.status(404).json({ error: 'Route not found' });
+});
+
+app.listen(env.port, () => {
+  console.log(`FlixCod backend listening on http://localhost:${env.port}`);
 
 const app = express();
 app.use(cors({ origin: corsOrigin === '*' ? true : corsOrigin }));

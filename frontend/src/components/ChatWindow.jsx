@@ -3,8 +3,25 @@ import { useEffect, useState } from 'react';
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8787';
 
 const quickPrompts = {
-  ar: ['حسن الصفحة الرئيسية.', 'اكتب إعلان جذاب.', 'أنشئ خطة إطلاق سريعة.'],
-  en: ['Improve landing copy.', 'Write a catchy ad.', 'Build a quick launch plan.']
+  ar: ['تحسين الأمر', 'شرح الخطأ', 'سكريبت نشر مجاني', 'تحويل وصف إلى Bash'],
+  en: ['Improve command', 'Explain error', 'Free deploy script', 'Convert brief to Bash']
+};
+
+const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787';
+
+export default function ChatWindow({ t, language, provider, model, localMode, userId }) {
+  ar: [
+    'تحسين صياغة الأمر',
+    'شرح خطأ الطرفية',
+    'اقتراح سكربت للنشر المجاني',
+    'تحويل نص عربي إلى أوامر Bash'
+  ],
+  en: [
+    'Improve this command prompt',
+    'Explain terminal error',
+    'Suggest free deploy script',
+    'Convert plain text to Bash'
+  ]
 };
 
 export default function ChatWindow({ t, language, provider, model, localMode, user }) {
@@ -12,10 +29,40 @@ export default function ChatWindow({ t, language, provider, model, localMode, us
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const baseMessage = user ? `${t.statusReady} · ${provider} / ${model}` : t.requiredToUseTools;
-    setMessages([{ role: 'assistant', text: baseMessage }]);
-  }, [t, provider, model, user]);
+  const onSend = async (event) => {
+    event.preventDefault();
+    const clean = input.trim();
+    if (!clean) return;
+
+    setMessages((prev) => [...prev, { role: 'user', text: clean }]);
+    setInput('');
+    setLoading(true);
+
+    try {
+      const response = await fetch(`${apiBase}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: clean,
+          provider,
+          model,
+          localMode,
+          userId: userId || 'anonymous'
+        })
+      });
+
+      const data = await response.json();
+      const reply = data.output || t.demoReply;
+      const meta = data.persisted ? '✓ DB' : `⚠ ${data.persistenceMessage || 'No DB'}`;
+      setMessages((prev) => [...prev, { role: 'assistant', text: `${reply} (${meta})` }]);
+    } catch (_error) {
+      setMessages((prev) => [...prev, { role: 'assistant', text: t.networkError }]);
+    } finally {
+      setLoading(false);
+    }
+  const pushPrompt = (prompt) => {
+    setInput(prompt);
+  };
 
   const onSend = async (e) => {
     e.preventDefault();
@@ -69,16 +116,15 @@ export default function ChatWindow({ t, language, provider, model, localMode, us
 
       <div className="quick-prompts">
         {quickPrompts[language].map((prompt) => (
-          <button type="button" key={prompt} onClick={() => setInput(prompt)} disabled={!user}>
+          <button type="button" key={prompt} onClick={() => setInput(prompt)}>
+          <button type="button" key={prompt} onClick={() => pushPrompt(prompt)}>
             {prompt}
           </button>
         ))}
       </div>
 
       <form onSubmit={onSend} className="composer">
-        <button type="button" className="icon-btn" disabled>
-          +
-        </button>
+        <input value={input} onChange={(e) => setInput(e.target.value)} placeholder={t.chatPlaceholder} />
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}

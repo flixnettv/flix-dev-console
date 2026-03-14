@@ -1,6 +1,7 @@
 {
   "name": "flix-dev-console",
   "private": true,
+  "version": "0.2.0",
   "version": "0.1.0",
   "workspaces": [
     "frontend",
@@ -10,8 +11,8 @@
     "dev:frontend": "npm --workspace frontend run dev",
     "dev:backend": "npm --workspace backend run dev",
     "build": "npm --workspace frontend run build",
-    "dev": "./.dev up",
-    "dev:check": "./.dev check",
-    "start:backend": "npm --workspace backend run start"
+    "start:backend": "npm --workspace backend run start",
+    "check:backend": "node --check backend/src/server.js"
+    "build": "npm --workspace frontend run build"
   }
 }
