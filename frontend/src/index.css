@@ -1,5 +1,6 @@
 :root {
   font-family: Inter, 'Segoe UI', Tahoma, sans-serif;
+  font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
 }
 
 body {
@@ -102,6 +103,7 @@ button {
 
 .connect,
 button {
+.connect {
   cursor: pointer;
   font-weight: 700;
 }
@@ -145,6 +147,10 @@ button {
   flex-wrap: wrap;
   gap: 0.45rem;
   margin: 0.9rem 0;
+}
+
+.quick-prompts button {
+  cursor: pointer;
 }
 
 .composer {

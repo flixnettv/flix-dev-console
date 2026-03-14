@@ -2,6 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import ChatWindow from './components/ChatWindow';
 import { translations } from './i18n/translations';
 import { supabase } from './lib/supabaseClient';
+import { useMemo, useState } from 'react';
+import ChatWindow from './components/ChatWindow';
+import { translations } from './i18n/translations';
 
 const providers = {
   'Open Code': ['open-code-lite', 'open-code-proxy'],
@@ -34,6 +37,17 @@ export default function App() {
 
     return () => listener.subscription.unsubscribe();
   }, []);
+
+  const t = translations[language];
+
+  const dir = language === 'ar' ? 'rtl' : 'ltr';
+
+  const providerModels = useMemo(() => providers[provider] ?? [], [provider]);
+
+  const handleProviderChange = (nextProvider) => {
+    setProvider(nextProvider);
+    setModel(providers[nextProvider][0]);
+  };
 
   const connectProvider = () => {
     localStorage.setItem(
@@ -112,6 +126,7 @@ export default function App() {
                 setModel(providers[e.target.value][0]);
               }}
             >
+            <select value={provider} onChange={(e) => handleProviderChange(e.target.value)}>
               {Object.keys(providers).map((item) => (
                 <option key={item} value={item}>
                   {item}

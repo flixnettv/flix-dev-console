@@ -2,6 +2,7 @@ export const translations = {
   ar: {
     appTitle: 'FlixCod',
     appTagline: 'غلاف طرفية عصري يعتمد على موارد جهاز المستخدم أولاً.',
+    appTagline: 'غلاف طرفية عصري وسهل، يعمل بموارد جهاز المستخدم أولاً.',
     lang: 'اللغة',
     theme: 'الثيم',
     light: 'أبيض باهت',
@@ -28,6 +29,21 @@ export const translations = {
   en: {
     appTitle: 'FlixCod',
     appTagline: 'A modern terminal shell powered by user-device resources first.',
+    connected: 'تم الحفظ محلياً',
+    chatPlaceholder: 'اكتب سؤالك أو الأمر...',
+    send: 'إرسال',
+    quick: 'خيارات ذكية',
+    loginHint: 'بعد تسجيل المستخدم، يظهر خيار ربط المزوّد داخل صندوق التفاعل.',
+    localMode: 'وضع الجهاز المحلي',
+    localModeDesc: 'تشغيل/استدعاء النماذج الخفيفة محلياً (WebGPU/CPU) عندما يكون متاحاً.',
+    roadmap: 'خطة الموارد المجانية',
+    statusReady: 'جاهز',
+    statusProcessing: 'قيد المعالجة...',
+    demoReply: 'هذه استجابة تجريبية. يمكنك ربط واجهات API لاحقاً من صفحة الإعداد.'
+  },
+  en: {
+    appTitle: 'FlixCod',
+    appTagline: 'A modern, easy terminal shell powered by the user device first.',
     lang: 'Language',
     theme: 'Theme',
     light: 'Muted Light',
@@ -50,5 +66,16 @@ export const translations = {
     email: 'Email',
     sendMagicLink: 'Send Magic Link',
     signOut: 'Sign Out'
+    connected: 'Saved locally',
+    chatPlaceholder: 'Type your prompt or command...',
+    send: 'Send',
+    quick: 'Smart Options',
+    loginHint: 'After user login, a provider-link option appears directly in chat controls.',
+    localMode: 'Local Device Mode',
+    localModeDesc: 'Run/call lightweight models on-device (WebGPU/CPU) when available.',
+    roadmap: 'Free-tier Resource Plan',
+    statusReady: 'Ready',
+    statusProcessing: 'Processing...',
+    demoReply: 'This is a demo response. You can wire real APIs from settings later.'
   }
 };

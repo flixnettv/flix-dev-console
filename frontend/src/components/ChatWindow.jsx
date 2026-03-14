@@ -8,6 +8,21 @@ const quickPrompts = {
 const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787';
 
 export default function ChatWindow({ t, language, provider, model, localMode, userId }) {
+  ar: [
+    'تحسين صياغة الأمر',
+    'شرح خطأ الطرفية',
+    'اقتراح سكربت للنشر المجاني',
+    'تحويل نص عربي إلى أوامر Bash'
+  ],
+  en: [
+    'Improve this command prompt',
+    'Explain terminal error',
+    'Suggest free deploy script',
+    'Convert plain text to Bash'
+  ]
+};
+
+export default function ChatWindow({ t, language, provider, model, localMode }) {
   const [messages, setMessages] = useState([
     { role: 'assistant', text: `${t.statusReady} · ${provider} / ${model}` }
   ]);
@@ -45,6 +60,34 @@ export default function ChatWindow({ t, language, provider, model, localMode, us
     } finally {
       setLoading(false);
     }
+  const pushPrompt = (prompt) => {
+    setInput(prompt);
+  };
+
+  const onSend = (e) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    const userText = input.trim();
+    setMessages((prev) => [...prev, { role: 'user', text: userText }]);
+    setInput('');
+    setLoading(true);
+
+    setTimeout(() => {
+      const runtimeHint = localMode
+        ? language === 'ar'
+          ? 'تمت المعالجة عبر نمط الجهاز المحلي.'
+          : 'Processed in local-device mode.'
+        : language === 'ar'
+          ? 'تمت المحاكاة عبر وضع السحابة.'
+          : 'Simulated through cloud mode.';
+
+      setMessages((prev) => [
+        ...prev,
+        { role: 'assistant', text: `${t.demoReply} ${runtimeHint}` }
+      ]);
+      setLoading(false);
+    }, 650);
   };
 
   return (
@@ -63,6 +106,7 @@ export default function ChatWindow({ t, language, provider, model, localMode, us
         <span>{t.quick}</span>
         {quickPrompts[language].map((prompt) => (
           <button type="button" key={prompt} onClick={() => setInput(prompt)}>
+          <button type="button" key={prompt} onClick={() => pushPrompt(prompt)}>
             {prompt}
           </button>
         ))}
@@ -70,6 +114,11 @@ export default function ChatWindow({ t, language, provider, model, localMode, us
 
       <form onSubmit={onSend} className="composer">
         <input value={input} onChange={(e) => setInput(e.target.value)} placeholder={t.chatPlaceholder} />
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder={t.chatPlaceholder}
+        />
         <button type="submit">{t.send}</button>
       </form>
     </section>
