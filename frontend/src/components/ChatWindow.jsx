@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8787';
 
 const quickPrompts = {
   ar: ['تحسين الأمر', 'شرح الخطأ', 'سكريبت نشر مجاني', 'تحويل وصف إلى Bash'],
@@ -22,10 +24,8 @@ export default function ChatWindow({ t, language, provider, model, localMode, us
   ]
 };
 
-export default function ChatWindow({ t, language, provider, model, localMode }) {
-  const [messages, setMessages] = useState([
-    { role: 'assistant', text: `${t.statusReady} · ${provider} / ${model}` }
-  ]);
+export default function ChatWindow({ t, language, provider, model, localMode, user }) {
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -64,30 +64,42 @@ export default function ChatWindow({ t, language, provider, model, localMode }) 
     setInput(prompt);
   };
 
-  const onSend = (e) => {
+  const onSend = async (e) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || !user) return;
 
     const userText = input.trim();
     setMessages((prev) => [...prev, { role: 'user', text: userText }]);
     setInput('');
     setLoading(true);
 
-    setTimeout(() => {
+    try {
+      const response = await fetch(`${API_BASE}/api/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-id': user.id
+        },
+        body: JSON.stringify({ message: userText, provider, model, localMode })
+      });
+
+      if (!response.ok) throw new Error('chat_request_failed');
+
+      const data = await response.json();
       const runtimeHint = localMode
         ? language === 'ar'
-          ? 'تمت المعالجة عبر نمط الجهاز المحلي.'
-          : 'Processed in local-device mode.'
+          ? 'تشغيل محلي.'
+          : 'Local mode.'
         : language === 'ar'
-          ? 'تمت المحاكاة عبر وضع السحابة.'
-          : 'Simulated through cloud mode.';
+          ? 'تشغيل سحابي.'
+          : 'Cloud mode.';
 
-      setMessages((prev) => [
-        ...prev,
-        { role: 'assistant', text: `${t.demoReply} ${runtimeHint}` }
-      ]);
+      setMessages((prev) => [...prev, { role: 'assistant', text: `${t.demoReply} ${runtimeHint} ${data.output}` }]);
+    } catch {
+      setMessages((prev) => [...prev, { role: 'assistant', text: t.registerError }]);
+    } finally {
       setLoading(false);
-    }, 650);
+    }
   };
 
   return (
@@ -103,7 +115,6 @@ export default function ChatWindow({ t, language, provider, model, localMode }) 
       </div>
 
       <div className="quick-prompts">
-        <span>{t.quick}</span>
         {quickPrompts[language].map((prompt) => (
           <button type="button" key={prompt} onClick={() => setInput(prompt)}>
           <button type="button" key={prompt} onClick={() => pushPrompt(prompt)}>
@@ -117,9 +128,15 @@ export default function ChatWindow({ t, language, provider, model, localMode }) 
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={t.chatPlaceholder}
+          placeholder={user ? t.chatPlaceholder : t.requiredToUseTools}
+          disabled={!user}
         />
-        <button type="submit">{t.send}</button>
+        <button type="button" className="icon-btn" disabled>
+          🎤
+        </button>
+        <button type="submit" className="send-btn" disabled={!user || loading}>
+          ↑
+        </button>
       </form>
     </section>
   );
