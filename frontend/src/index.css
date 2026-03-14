@@ -1,0 +1,159 @@
+:root {
+  font-family: Inter, 'Segoe UI', Tahoma, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #090b10;
+}
+
+.app {
+  min-height: 100vh;
+  padding: 1.25rem;
+  transition: 0.25s ease;
+}
+
+.app.dark {
+  background: radial-gradient(circle at top, #141b2d, #090b10 45%);
+  color: #f6f7fb;
+}
+
+.app.light {
+  background: #eceef2;
+  color: #161924;
+}
+
+.topbar,
+.bridge-box,
+.chat-shell {
+  max-width: 980px;
+  margin: 0 auto 1rem;
+  border-radius: 14px;
+  padding: 1rem;
+  backdrop-filter: blur(6px);
+}
+
+.dark .topbar,
+.dark .bridge-box,
+.dark .chat-shell {
+  border: 1px solid #2a3048;
+  background: #121728d6;
+}
+
+.light .topbar,
+.light .bridge-box,
+.light .chat-shell {
+  border: 1px solid #c6cedd;
+  background: #f7f8fb;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 0.75rem;
+}
+
+.auth-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 0.65rem;
+}
+
+label {
+  display: grid;
+  gap: 0.35rem;
+  font-weight: 600;
+}
+
+select,
+input,
+button {
+  border-radius: 10px;
+  border: 1px solid #5b6a8c;
+  background: transparent;
+  color: inherit;
+  padding: 0.55rem 0.7rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.8rem;
+  align-items: end;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.checkbox small {
+  display: block;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.connect,
+button {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.messages {
+  display: grid;
+  gap: 0.65rem;
+  min-height: 260px;
+  max-height: 45vh;
+  overflow: auto;
+  padding-right: 0.2rem;
+}
+
+.msg {
+  border-radius: 12px;
+  padding: 0.7rem;
+}
+
+.dark .msg {
+  background: #1a2237;
+}
+
+.light .msg {
+  background: #e2e7f2;
+}
+
+.msg.user {
+  border-inline-start: 3px solid #56a9ff;
+}
+
+.msg.assistant {
+  border-inline-start: 3px solid #7df0b8;
+}
+
+.msg p {
+  margin: 0.4rem 0 0;
+}
+
+.quick-prompts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0.9rem 0;
+}
+
+.composer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.7rem;
+}
+
+.status {
+  opacity: 0.8;
+  margin: 0;
+}
