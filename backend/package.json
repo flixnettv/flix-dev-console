@@ -1,6 +1,7 @@
 {
   "name": "flixcod-backend",
   "private": true,
+  "version": "0.2.0",
   "version": "0.1.0",
   "type": "module",
   "scripts": {
@@ -8,6 +9,9 @@
     "start": "node src/server.js"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
     "cors": "^2.8.5",
     "express": "^4.21.1"
   }

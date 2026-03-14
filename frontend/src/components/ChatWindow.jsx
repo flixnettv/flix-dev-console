@@ -1,6 +1,13 @@
 import { useState } from 'react';
 
 const quickPrompts = {
+  ar: ['تحسين الأمر', 'شرح الخطأ', 'سكريبت نشر مجاني', 'تحويل وصف إلى Bash'],
+  en: ['Improve command', 'Explain error', 'Free deploy script', 'Convert brief to Bash']
+};
+
+const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787';
+
+export default function ChatWindow({ t, language, provider, model, localMode, userId }) {
   ar: [
     'تحسين صياغة الأمر',
     'شرح خطأ الطرفية',
@@ -22,6 +29,37 @@ export default function ChatWindow({ t, language, provider, model, localMode }) 
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const onSend = async (event) => {
+    event.preventDefault();
+    const clean = input.trim();
+    if (!clean) return;
+
+    setMessages((prev) => [...prev, { role: 'user', text: clean }]);
+    setInput('');
+    setLoading(true);
+
+    try {
+      const response = await fetch(`${apiBase}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: clean,
+          provider,
+          model,
+          localMode,
+          userId: userId || 'anonymous'
+        })
+      });
+
+      const data = await response.json();
+      const reply = data.output || t.demoReply;
+      const meta = data.persisted ? '✓ DB' : `⚠ ${data.persistenceMessage || 'No DB'}`;
+      setMessages((prev) => [...prev, { role: 'assistant', text: `${reply} (${meta})` }]);
+    } catch (_error) {
+      setMessages((prev) => [...prev, { role: 'assistant', text: t.networkError }]);
+    } finally {
+      setLoading(false);
+    }
   const pushPrompt = (prompt) => {
     setInput(prompt);
   };
@@ -67,6 +105,7 @@ export default function ChatWindow({ t, language, provider, model, localMode }) 
       <div className="quick-prompts">
         <span>{t.quick}</span>
         {quickPrompts[language].map((prompt) => (
+          <button type="button" key={prompt} onClick={() => setInput(prompt)}>
           <button type="button" key={prompt} onClick={() => pushPrompt(prompt)}>
             {prompt}
           </button>
@@ -74,6 +113,7 @@ export default function ChatWindow({ t, language, provider, model, localMode }) 
       </div>
 
       <form onSubmit={onSend} className="composer">
+        <input value={input} onChange={(e) => setInput(e.target.value)} placeholder={t.chatPlaceholder} />
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
